@@ -1,4 +1,4 @@
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_BASE || '/api';
 
 export async function fetchVideoInfo(url) {
   const res = await fetch(`${API_BASE}/yt/info`, {
