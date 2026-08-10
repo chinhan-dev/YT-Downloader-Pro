@@ -91,7 +91,6 @@ export default function App() {
 
               {/* Ad Unit 2: 160x300 Iframe Banner (Sticky Sidebar on Desktop) */}
               <div className="w-full xl:w-auto shrink-0 flex flex-col items-center justify-start xl:sticky xl:top-6">
-                <div className="text-[10px] font-mono text-slate-400 mb-1 uppercase tracking-wider">Quảng cáo</div>
                 <AdsterraSidebarBanner />
               </div>
             </div>
