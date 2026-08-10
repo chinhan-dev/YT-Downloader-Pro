@@ -6,6 +6,7 @@ import AudioColumn from './components/AudioColumn';
 import VideoColumn from './components/VideoColumn';
 import DownloadModal from './components/DownloadModal';
 import { fetchVideoInfo, startDownload } from './api/client';
+import { injectAdsterraScripts } from './config/ads';
 import { Download } from 'lucide-react';
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
     try {
       const data = await fetchVideoInfo(url);
       setInfo(data);
+      injectAdsterraScripts();
     } catch (err) {
       setError(err.message || 'Không thể tìm thấy video. Vui lòng kiểm tra lại đường dẫn URL.');
     } finally {
