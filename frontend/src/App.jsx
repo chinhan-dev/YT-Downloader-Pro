@@ -7,6 +7,7 @@ import VideoColumn from './components/VideoColumn';
 import DownloadModal from './components/DownloadModal';
 import AdsterraNativeBanner from './components/AdsterraNativeBanner';
 import AdsterraSidebarBanner from './components/AdsterraSidebarBanner';
+import SeoContentSection from './components/SeoContentSection';
 import { fetchVideoInfo, startDownload } from './api/client';
 import { injectAdsterraScripts } from './config/ads';
 import { Download } from 'lucide-react';
@@ -122,6 +123,9 @@ export default function App() {
               <AdsterraSidebarBanner />
             </div>
           )}
+
+          {/* Rich SEO Content, Guide & FAQ Section */}
+          <SeoContentSection />
         </main>
 
         {/* Footer */}
