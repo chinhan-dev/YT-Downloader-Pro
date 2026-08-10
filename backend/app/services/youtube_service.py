@@ -40,11 +40,11 @@ def get_youtube_info(url: str) -> Dict[str, Any]:
     info = None
     last_error = None
     
-    # Try different player clients to bypass YouTube bot detection on cloud servers
+    # android_vr client bypasses YouTube datacenter bot detection completely
     client_configs = [
-        ['android_vr', 'android', 'ios', 'mweb'],
-        ['ios', 'android', 'mweb', 'web_creator', 'web'],
-        ['web_creator', 'mweb', 'android'],
+        ['android_vr'],
+        ['android_vr', 'android'],
+        ['ios', 'android', 'mweb'],
         ['web']
     ]
     
@@ -58,7 +58,7 @@ def get_youtube_info(url: str) -> Dict[str, Any]:
             }
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
-                if info:
+                if info and info.get('title'):
                     break
         except Exception as e:
             last_error = e

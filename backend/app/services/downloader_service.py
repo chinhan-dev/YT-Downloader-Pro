@@ -110,9 +110,9 @@ def run_audio_download(job_id: str, url: str, format_type: str, bitrate: str, ex
             })
             
         client_configs = [
-            ['android_vr', 'android', 'ios', 'mweb'],
-            ['ios', 'android', 'mweb', 'web_creator', 'web'],
-            ['web_creator', 'mweb', 'android'],
+            ['android_vr'],
+            ['android_vr', 'android'],
+            ['ios', 'android', 'mweb'],
             ['web']
         ]
         
@@ -186,9 +186,9 @@ def run_video_download(job_id: str, url: str, format_selector: str, ext: str = '
         }
         
         client_configs = [
-            ['android_vr', 'android', 'ios', 'mweb'],
-            ['ios', 'android', 'mweb', 'web_creator', 'web'],
-            ['web_creator', 'mweb', 'android'],
+            ['android_vr'],
+            ['android_vr', 'android'],
+            ['ios', 'android', 'mweb'],
             ['web']
         ]
         
