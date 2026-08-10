@@ -1,4 +1,8 @@
-const API_BASE = import.meta.env.VITE_API_BASE || '/api';
+const API_BASE = import.meta.env.VITE_API_BASE || (
+  typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? '/api'
+    : 'https://yt-downloader-pro-d13b.onrender.com/api'
+);
 
 export async function fetchVideoInfo(url) {
   const res = await fetch(`${API_BASE}/yt/info`, {
