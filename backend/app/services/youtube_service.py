@@ -1,6 +1,8 @@
 import os
 import re
 import math
+import urllib.request
+import json
 import yt_dlp
 from typing import Dict, Any, List
 
@@ -24,6 +26,151 @@ def format_size(bytes_val: float) -> str:
         bytes_val /= 1024.0
         i += 1
     return f"{bytes_val:.1f} {units[i]}"
+
+def get_oembed_info(url: str) -> Dict[str, Any]:
+    req_url = f"https://www.youtube.com/oembed?url={urllib.parse.quote(url)}&format=json"
+    req = urllib.request.Request(req_url, headers={
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
+    })
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        data = json.loads(resp.read().decode('utf-8'))
+        
+    title = data.get('title', 'Video YouTube')
+    uploader = data.get('author_name', 'YouTube Channel')
+    thumbnail = data.get('thumbnail_url', '')
+    
+    # Standard Video Qualities
+    video_qualities = [
+        {
+            'id': 'vid_2160p',
+            'height': 2160,
+            'label': '2160p',
+            'badge': '4K Ultra HD',
+            'fps': 30,
+            'format_selector': 'bestvideo[height<=2160]+bestaudio/best',
+            'ext': 'mp4',
+            'size_str': 'Chất lượng cao nhất'
+        },
+        {
+            'id': 'vid_1440p',
+            'height': 1440,
+            'label': '1440p',
+            'badge': '2K Quad HD',
+            'fps': 30,
+            'format_selector': 'bestvideo[height<=1440]+bestaudio/best',
+            'ext': 'mp4',
+            'size_str': 'Chất lượng nét'
+        },
+        {
+            'id': 'vid_1080p',
+            'height': 1080,
+            'label': '1080p',
+            'badge': 'Full HD',
+            'fps': 30,
+            'format_selector': 'bestvideo[height<=1080]+bestaudio/best',
+            'ext': 'mp4',
+            'size_str': 'Chuẩn HD sắc nét'
+        },
+        {
+            'id': 'vid_720p',
+            'height': 720,
+            'label': '720p',
+            'badge': 'HD',
+            'fps': 30,
+            'format_selector': 'bestvideo[height<=720]+bestaudio/best',
+            'ext': 'mp4',
+            'size_str': 'Dung lượng vừa'
+        },
+        {
+            'id': 'vid_480p',
+            'height': 480,
+            'label': '480p',
+            'badge': 'SD',
+            'fps': 30,
+            'format_selector': 'bestvideo[height<=480]+bestaudio/best',
+            'ext': 'mp4',
+            'size_str': 'Dung lượng nhẹ'
+        },
+        {
+            'id': 'vid_360p',
+            'height': 360,
+            'label': '360p',
+            'badge': 'SD',
+            'fps': 30,
+            'format_selector': 'bestvideo[height<=360]+bestaudio/best',
+            'ext': 'mp4',
+            'size_str': 'Dung lượng tối ưu'
+        }
+    ]
+    
+    # Standard Audio Qualities
+    audio_qualities = [
+        {
+            'id': 'aud_320k',
+            'label': 'MP3 320 KB/s',
+            'badge': 'Chất lượng cao nhất',
+            'bitrate': '320k',
+            'format_type': 'mp3',
+            'ext': 'mp3',
+            'desc': 'Âm thanh sắc nét nhất cho tai nghe & loa cao cấp'
+        },
+        {
+            'id': 'aud_256k',
+            'label': 'MP3 256 KB/s',
+            'badge': 'Chất lượng tốt',
+            'bitrate': '256k',
+            'format_type': 'mp3',
+            'ext': 'mp3',
+            'desc': 'Cân bằng tốt giữa dung lượng và chất lượng'
+        },
+        {
+            'id': 'aud_128k',
+            'label': 'MP3 128 KB/s',
+            'badge': 'Tiêu chuẩn',
+            'bitrate': '128k',
+            'format_type': 'mp3',
+            'ext': 'mp3',
+            'desc': 'Dung lượng nhẹ, phù hợp nghe hàng ngày'
+        },
+        {
+            'id': 'aud_m4a',
+            'label': 'M4A / AAC Gốc',
+            'badge': 'Audio Gốc YouTube',
+            'bitrate': 'auto',
+            'format_type': 'm4a',
+            'ext': 'm4a',
+            'desc': 'Định dạng m4a nguyên bản từ luồng gốc'
+        },
+        {
+            'id': 'aud_opus',
+            'label': 'WEBM / OPUS Gốc',
+            'badge': 'Hiệu suất cao',
+            'bitrate': 'auto',
+            'format_type': 'opus',
+            'ext': 'webm',
+            'desc': 'Codec Opus tiết kiệm dung lượng'
+        },
+        {
+            'id': 'aud_wav',
+            'label': 'WAV Lossless',
+            'badge': 'Không nén',
+            'bitrate': 'lossless',
+            'format_type': 'wav',
+            'ext': 'wav',
+            'desc': 'Định dạng WAV không nén chuyên dùng dựng phim'
+        }
+    ]
+    
+    return {
+        'url': url,
+        'title': title,
+        'thumbnail': thumbnail,
+        'duration': 'Tự động',
+        'uploader': uploader,
+        'view_count': 'N/A',
+        'audio_qualities': audio_qualities,
+        'video_qualities': video_qualities
+    }
 
 def get_youtube_info(url: str) -> Dict[str, Any]:
     cookie_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../cookies.txt'))
@@ -77,7 +224,11 @@ def get_youtube_info(url: str) -> Dict[str, Any]:
             continue
             
     if not info:
-        raise Exception(f"Không thể lấy thông tin video: {str(last_error)}")
+        # Fallback to YouTube OEmbed API if yt-dlp triggers bot check on cloud IPs
+        try:
+            return get_oembed_info(url)
+        except Exception:
+            raise Exception(f"Không thể lấy thông tin video: {str(last_error)}")
         
     # Extract metadata
     title = info.get('title', 'Video YouTube')
