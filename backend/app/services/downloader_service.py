@@ -70,6 +70,16 @@ def run_audio_download(job_id: str, url: str, format_type: str, bitrate: str, ex
             'outtmpl': out_template,
             'quiet': True,
             'no_warnings': True,
+            'nocheckcertificate': True,
+            'extractor_args': {
+                'youtube': {
+                    'player_client': ['ios', 'android', 'mweb', 'web_creator', 'web'],
+                }
+            },
+            'http_headers': {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                'Accept-Language': 'vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7',
+            },
             'progress_hooks': [lambda d: download_progress_hook(d, job_id)],
         }
         
@@ -107,7 +117,6 @@ def run_audio_download(job_id: str, url: str, format_type: str, bitrate: str, ex
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
             
-        # Locate downloaded file
         expected_ext = ext if ext else 'mp3'
         files = [f for f in os.listdir(DOWNLOADS_DIR) if job_id[:8] in f]
         
@@ -154,6 +163,16 @@ def run_video_download(job_id: str, url: str, format_selector: str, ext: str = '
             'outtmpl': out_template,
             'quiet': True,
             'no_warnings': True,
+            'nocheckcertificate': True,
+            'extractor_args': {
+                'youtube': {
+                    'player_client': ['ios', 'android', 'mweb', 'web_creator', 'web'],
+                }
+            },
+            'http_headers': {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                'Accept-Language': 'vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7',
+            },
             'progress_hooks': [lambda d: download_progress_hook(d, job_id)],
         }
         

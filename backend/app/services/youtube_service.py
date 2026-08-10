@@ -30,6 +30,16 @@ def get_youtube_info(url: str) -> Dict[str, Any]:
         'quiet': True,
         'no_warnings': True,
         'skip_download': True,
+        'nocheckcertificate': True,
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['ios', 'android', 'mweb', 'web_creator', 'web'],
+            }
+        },
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            'Accept-Language': 'vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7',
+        }
     }
     
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -113,7 +123,7 @@ def get_youtube_info(url: str) -> Dict[str, Any]:
             'size_str': 'Tự động tính'
         })
         
-    # Process Audio Formats (kbps converted to KB/s as requested)
+    # Process Audio Formats
     audio_qualities = [
         {
             'id': 'aud_320k',
