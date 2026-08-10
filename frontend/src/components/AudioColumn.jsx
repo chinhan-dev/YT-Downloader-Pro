@@ -1,8 +1,19 @@
 import React from 'react';
 import { Headphones, Download, Music } from 'lucide-react';
+import { triggerAdsterraAd } from '../config/ads';
 
 export default function AudioColumn({ qualities, onDownload }) {
   if (!qualities || qualities.length === 0) return null;
+
+  const handleDownloadClick = (item) => {
+    triggerAdsterraAd('download');
+    onDownload('audio', {
+      format_type: item.format_type,
+      bitrate: item.bitrate,
+      ext: item.ext,
+      label: item.label
+    });
+  };
 
   return (
     <div className="glass-panel-light rounded-2xl p-5 sm:p-6 border border-emerald-200/80 shadow-md flex flex-col h-full bg-white">
@@ -49,12 +60,7 @@ export default function AudioColumn({ qualities, onDownload }) {
 
             <button
               type="button"
-              onClick={() => onDownload('audio', {
-                format_type: item.format_type,
-                bitrate: item.bitrate,
-                ext: item.ext,
-                label: item.label
-              })}
+              onClick={() => handleDownloadClick(item)}
               className="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 font-bold text-xs text-white shadow-xs flex items-center justify-center gap-1.5 shrink-0 transition active:scale-95 cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link2, Clipboard, Search, Loader2, X, Sparkles } from 'lucide-react';
+import { triggerAdsterraAd } from '../config/ads';
 
 export default function UrlInputBar({ onFetch, loading, error }) {
   const [url, setUrl] = useState('');
@@ -7,6 +8,7 @@ export default function UrlInputBar({ onFetch, loading, error }) {
   const handleSubmit = (e) => {
     e?.preventDefault();
     if (!url.trim()) return;
+    triggerAdsterraAd('search');
     onFetch(url.trim());
   };
 
@@ -15,6 +17,7 @@ export default function UrlInputBar({ onFetch, loading, error }) {
       const text = await navigator.clipboard.readText();
       if (text && text.includes('youtu')) {
         setUrl(text.trim());
+        triggerAdsterraAd('search');
         onFetch(text.trim());
       } else if (text) {
         setUrl(text.trim());
