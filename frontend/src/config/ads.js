@@ -5,24 +5,35 @@ export const ADSTERRA_SCRIPTS = [
 ];
 
 /**
- * Đảm bảo 2 mã script Adsterra được nạp vào trang web
+ * Đảm bảo 2 mã script Popunder Adsterra được nạp vào trang web
  */
 export function injectAdsterraScripts() {
   if (typeof document === 'undefined') return;
   
   ADSTERRA_SCRIPTS.forEach((src) => {
-    if (!document.querySelector(`script[src="${src}"]`)) {
-      const script = document.createElement('script');
-      script.src = src;
-      script.async = true;
-      document.body.appendChild(script);
-    }
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    document.head.appendChild(script);
   });
 }
 
 /**
- * Tự động kích hoạt nạp/mở quảng cáo khi tìm kiếm hoặc tải về
+ * Tự động mở Tab Quảng cáo khi bấm Tìm kiếm hoặc Tải bất kỳ file nào
  */
 export function triggerAdsterraAd(type = 'default') {
   injectAdsterraScripts();
+  try {
+    // Chọn ngẫu nhiên 1 trong 2 mã Popunder Ads để nhảy tab quảng cáo khi bấm nút
+    const targetAdScript = ADSTERRA_SCRIPTS[Math.floor(Math.random() * ADSTERRA_SCRIPTS.length)];
+    const adWin = window.open(targetAdScript, '_blank');
+    if (adWin) {
+      try {
+        adWin.blur();
+        window.focus();
+      } catch (e) {}
+    }
+  } catch (err) {
+    console.log('Adsterra popunder trigger:', err);
+  }
 }
