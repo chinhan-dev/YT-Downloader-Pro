@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Clock, Eye, User, CheckCircle2 } from 'lucide-react';
+import { Play, Clock, User, CheckCircle2 } from 'lucide-react';
 
 export default function VideoOverviewCard({ info }) {
   if (!info) return null;
@@ -39,14 +39,10 @@ export default function VideoOverviewCard({ info }) {
               <User className="w-3.5 h-3.5 text-emerald-600" />
               <span className="font-semibold text-slate-800">{info.uploader}</span>
             </div>
-
-            <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
-              <Eye className="w-3.5 h-3.5 text-teal-600" />
-              <span className="font-medium text-slate-700">{info.view_count} lượt xem</span>
-            </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
