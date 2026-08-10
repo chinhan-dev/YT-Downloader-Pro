@@ -65,6 +65,7 @@ def run_audio_download(job_id: str, url: str, format_type: str, bitrate: str, ex
     
     try:
         out_template = os.path.join(DOWNLOADS_DIR, f"%(title)s_{job_id[:8]}.%(ext)s")
+        cookie_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../cookies.txt'))
         
         base_opts = {
             'outtmpl': out_template,
@@ -78,6 +79,9 @@ def run_audio_download(job_id: str, url: str, format_type: str, bitrate: str, ex
             'progress_hooks': [lambda d: download_progress_hook(d, job_id)],
         }
         
+        if os.path.exists(cookie_path):
+            base_opts['cookiefile'] = cookie_path
+            
         if format_type in ['mp3', 'wav']:
             base_opts.update({
                 'format': 'bestaudio/best',
@@ -110,9 +114,9 @@ def run_audio_download(job_id: str, url: str, format_type: str, bitrate: str, ex
             })
             
         client_configs = [
+            ['tv', 'mweb'],
             ['android_vr'],
-            ['android_vr', 'android'],
-            ['ios', 'android', 'mweb'],
+            ['ios', 'android'],
             ['web']
         ]
         
@@ -170,6 +174,7 @@ def run_video_download(job_id: str, url: str, format_selector: str, ext: str = '
     
     try:
         out_template = os.path.join(DOWNLOADS_DIR, f"%(title)s_{job_id[:8]}.%(ext)s")
+        cookie_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../cookies.txt'))
         
         base_opts = {
             'format': format_selector or 'bestvideo+bestaudio/best',
@@ -185,10 +190,13 @@ def run_video_download(job_id: str, url: str, format_selector: str, ext: str = '
             'progress_hooks': [lambda d: download_progress_hook(d, job_id)],
         }
         
+        if os.path.exists(cookie_path):
+            base_opts['cookiefile'] = cookie_path
+            
         client_configs = [
+            ['tv', 'mweb'],
             ['android_vr'],
-            ['android_vr', 'android'],
-            ['ios', 'android', 'mweb'],
+            ['ios', 'android'],
             ['web']
         ]
         

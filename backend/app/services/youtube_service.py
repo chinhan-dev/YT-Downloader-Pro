@@ -26,6 +26,8 @@ def format_size(bytes_val: float) -> str:
     return f"{bytes_val:.1f} {units[i]}"
 
 def get_youtube_info(url: str) -> Dict[str, Any]:
+    cookie_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../cookies.txt'))
+    
     base_opts = {
         'quiet': True,
         'no_warnings': True,
@@ -37,14 +39,24 @@ def get_youtube_info(url: str) -> Dict[str, Any]:
         }
     }
     
+    if os.path.exists(cookie_path):
+        base_opts['cookiefile'] = cookie_path
+    elif os.environ.get('YOUTUBE_COOKIES'):
+        try:
+            with open(cookie_path, 'w', encoding='utf-8') as f:
+                f.write(os.environ.get('YOUTUBE_COOKIES'))
+            base_opts['cookiefile'] = cookie_path
+        except Exception:
+            pass
+    
     info = None
     last_error = None
     
-    # android_vr client bypasses YouTube datacenter bot detection completely
     client_configs = [
+        ['tv', 'mweb'],
         ['android_vr'],
-        ['android_vr', 'android'],
-        ['ios', 'android', 'mweb'],
+        ['ios', 'android'],
+        ['web_creator', 'mweb'],
         ['web']
     ]
     
