@@ -14,6 +14,19 @@ JOBS: Dict[str, Dict[str, Any]] = {}
 def get_job(job_id: str) -> Optional[Dict[str, Any]]:
     return JOBS.get(job_id)
 
+def ensure_cookie_file() -> Optional[str]:
+    cookie_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../cookies.txt'))
+    if os.path.exists(cookie_path):
+        return cookie_path
+    if os.environ.get('YOUTUBE_COOKIES'):
+        try:
+            with open(cookie_path, 'w', encoding='utf-8') as f:
+                f.write(os.environ.get('YOUTUBE_COOKIES'))
+            return cookie_path
+        except Exception:
+            pass
+    return None
+
 def download_progress_hook(d: Dict[str, Any], job_id: str):
     if job_id not in JOBS:
         return
@@ -65,7 +78,7 @@ def run_audio_download(job_id: str, url: str, format_type: str, bitrate: str, ex
     
     try:
         out_template = os.path.join(DOWNLOADS_DIR, f"%(title)s_{job_id[:8]}.%(ext)s")
-        cookie_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../cookies.txt'))
+        cookie_path = ensure_cookie_file()
         
         base_opts = {
             'outtmpl': out_template,
@@ -79,7 +92,7 @@ def run_audio_download(job_id: str, url: str, format_type: str, bitrate: str, ex
             'progress_hooks': [lambda d: download_progress_hook(d, job_id)],
         }
         
-        if os.path.exists(cookie_path):
+        if cookie_path:
             base_opts['cookiefile'] = cookie_path
             
         if format_type in ['mp3', 'wav']:
@@ -114,9 +127,10 @@ def run_audio_download(job_id: str, url: str, format_type: str, bitrate: str, ex
             })
             
         client_configs = [
-            ['tv', 'mweb'],
             ['android_vr'],
-            ['ios', 'android'],
+            ['android_vr', 'android'],
+            ['ios', 'android', 'mweb'],
+            ['web_creator', 'mweb'],
             ['web']
         ]
         
@@ -174,7 +188,7 @@ def run_video_download(job_id: str, url: str, format_selector: str, ext: str = '
     
     try:
         out_template = os.path.join(DOWNLOADS_DIR, f"%(title)s_{job_id[:8]}.%(ext)s")
-        cookie_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../cookies.txt'))
+        cookie_path = ensure_cookie_file()
         
         base_opts = {
             'format': format_selector or 'bestvideo+bestaudio/best',
@@ -190,13 +204,14 @@ def run_video_download(job_id: str, url: str, format_selector: str, ext: str = '
             'progress_hooks': [lambda d: download_progress_hook(d, job_id)],
         }
         
-        if os.path.exists(cookie_path):
+        if cookie_path:
             base_opts['cookiefile'] = cookie_path
             
         client_configs = [
-            ['tv', 'mweb'],
             ['android_vr'],
-            ['ios', 'android'],
+            ['android_vr', 'android'],
+            ['ios', 'android', 'mweb'],
+            ['web_creator', 'mweb'],
             ['web']
         ]
         
