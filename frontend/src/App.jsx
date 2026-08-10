@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import UrlInputBar from './components/UrlInputBar';
 import VideoOverviewCard from './components/VideoOverviewCard';
@@ -19,6 +19,11 @@ export default function App() {
 
   const [activeJobId, setActiveJobId] = useState(null);
   const [activeTargetLabel, setActiveTargetLabel] = useState('');
+
+  // Inject Popunder Adsterra Scripts on initial page load
+  useEffect(() => {
+    injectAdsterraScripts();
+  }, []);
 
   // Fetch YouTube Info
   const handleFetchInfo = async (url) => {
@@ -69,13 +74,13 @@ export default function App() {
             error={error}
           />
 
-          {/* Ad Unit 1: Native Banner Container Ad */}
+          {/* Ad Code 3: Native Banner Container (ALWAYS VISIBLE ON PAGE) */}
           <AdsterraNativeBanner />
 
           {info && <VideoOverviewCard info={info} />}
 
-          {/* 2 COLUMNS LAYOUT + SIDEBAR AD UNIT 2 */}
-          {info && (
+          {/* 2 COLUMNS LAYOUT + SIDEBAR AD CODE 4 */}
+          {info ? (
             <div className="mt-8 flex flex-col xl:flex-row gap-6 items-start justify-center animate-fadeIn">
               {/* 2 Main Download Columns */}
               <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
@@ -89,26 +94,32 @@ export default function App() {
                 />
               </div>
 
-              {/* Ad Unit 2: 160x300 Iframe Banner (Sticky Sidebar on Desktop) */}
+              {/* Ad Code 4: 160x300 Iframe Banner (Sticky Sidebar on Desktop) */}
               <div className="w-full xl:w-auto shrink-0 flex flex-col items-center justify-start xl:sticky xl:top-6">
                 <AdsterraSidebarBanner />
               </div>
             </div>
-          )}
-
-          {!info && !loading && (
-            <div className="mt-12 text-center text-slate-500 py-12 px-4 glass-panel-light rounded-3xl border border-slate-200 max-w-3xl mx-auto">
-              <div className="relative w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-100 border border-emerald-200 flex items-center justify-center shadow-xs">
-                <svg className="w-8 h-8 text-emerald-600 fill-current" viewBox="0 0 24 24">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-xs ring-2 ring-white">
-                  <Download className="w-3.5 h-3.5" />
+          ) : (
+            /* INITIAL PAGE LOAD (BEFORE USER SEARCHES) */
+            <div className="mt-6 flex flex-col items-center justify-center gap-6">
+              {!loading && (
+                <div className="w-full text-center text-slate-500 py-10 px-4 glass-panel-light rounded-3xl border border-slate-200 max-w-3xl mx-auto">
+                  <div className="relative w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-100 border border-emerald-200 flex items-center justify-center shadow-xs">
+                    <svg className="w-8 h-8 text-emerald-600 fill-current" viewBox="0 0 24 24">
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-xs ring-2 ring-white">
+                      <Download className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
+                  <h3 className="text-base font-bold text-slate-800">
+                    Dán đường dẫn YouTube phía trên và nhấn "Tìm kiếm"
+                  </h3>
                 </div>
-              </div>
-              <h3 className="text-base font-bold text-slate-800">
-                Dán đường dẫn YouTube phía trên và nhấn "Tìm kiếm"
-              </h3>
+              )}
+
+              {/* Ad Code 4: 160x300 Banner ON HOMEPAGE */}
+              <AdsterraSidebarBanner />
             </div>
           )}
         </main>
