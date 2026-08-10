@@ -26,27 +26,46 @@ def format_size(bytes_val: float) -> str:
     return f"{bytes_val:.1f} {units[i]}"
 
 def get_youtube_info(url: str) -> Dict[str, Any]:
-    ydl_opts = {
+    base_opts = {
         'quiet': True,
         'no_warnings': True,
         'skip_download': True,
         'nocheckcertificate': True,
-        'extractor_args': {
-            'youtube': {
-                'player_client': ['ios', 'android', 'mweb', 'web_creator', 'web'],
-            }
-        },
         'http_headers': {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
             'Accept-Language': 'vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7',
         }
     }
     
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=False)
-        
+    info = None
+    last_error = None
+    
+    # Try different player clients to bypass YouTube bot detection on cloud servers
+    client_configs = [
+        ['android_vr', 'android', 'ios', 'mweb'],
+        ['ios', 'android', 'mweb', 'web_creator', 'web'],
+        ['web_creator', 'mweb', 'android'],
+        ['web']
+    ]
+    
+    for clients in client_configs:
+        try:
+            ydl_opts = base_opts.copy()
+            ydl_opts['extractor_args'] = {
+                'youtube': {
+                    'player_client': clients,
+                }
+            }
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=False)
+                if info:
+                    break
+        except Exception as e:
+            last_error = e
+            continue
+            
     if not info:
-        raise Exception("Không thể lấy thông tin video từ đường dẫn này.")
+        raise Exception(f"Không thể lấy thông tin video: {str(last_error)}")
         
     # Extract metadata
     title = info.get('title', 'Video YouTube')

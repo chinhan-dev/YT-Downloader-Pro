@@ -66,16 +66,11 @@ def run_audio_download(job_id: str, url: str, format_type: str, bitrate: str, ex
     try:
         out_template = os.path.join(DOWNLOADS_DIR, f"%(title)s_{job_id[:8]}.%(ext)s")
         
-        ydl_opts = {
+        base_opts = {
             'outtmpl': out_template,
             'quiet': True,
             'no_warnings': True,
             'nocheckcertificate': True,
-            'extractor_args': {
-                'youtube': {
-                    'player_client': ['ios', 'android', 'mweb', 'web_creator', 'web'],
-                }
-            },
             'http_headers': {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
                 'Accept-Language': 'vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7',
@@ -84,7 +79,7 @@ def run_audio_download(job_id: str, url: str, format_type: str, bitrate: str, ex
         }
         
         if format_type in ['mp3', 'wav']:
-            ydl_opts.update({
+            base_opts.update({
                 'format': 'bestaudio/best',
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
@@ -93,7 +88,7 @@ def run_audio_download(job_id: str, url: str, format_type: str, bitrate: str, ex
                 }],
             })
         elif format_type == 'm4a':
-            ydl_opts.update({
+            base_opts.update({
                 'format': 'bestaudio[ext=m4a]/bestaudio/best',
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
@@ -101,11 +96,11 @@ def run_audio_download(job_id: str, url: str, format_type: str, bitrate: str, ex
                 }],
             })
         elif format_type == 'opus':
-            ydl_opts.update({
+            base_opts.update({
                 'format': 'bestaudio[ext=webm]/bestaudio/best',
             })
         else:
-            ydl_opts.update({
+            base_opts.update({
                 'format': 'bestaudio/best',
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
@@ -114,12 +109,31 @@ def run_audio_download(job_id: str, url: str, format_type: str, bitrate: str, ex
                 }],
             })
             
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=True)
-            
-        expected_ext = ext if ext else 'mp3'
-        files = [f for f in os.listdir(DOWNLOADS_DIR) if job_id[:8] in f]
+        client_configs = [
+            ['android_vr', 'android', 'ios', 'mweb'],
+            ['ios', 'android', 'mweb', 'web_creator', 'web'],
+            ['web_creator', 'mweb', 'android'],
+            ['web']
+        ]
         
+        download_success = False
+        last_err = None
+        for clients in client_configs:
+            try:
+                ydl_opts = base_opts.copy()
+                ydl_opts['extractor_args'] = {'youtube': {'player_client': clients}}
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    ydl.extract_info(url, download=True)
+                    download_success = True
+                    break
+            except Exception as e:
+                last_err = e
+                continue
+                
+        if not download_success:
+            raise Exception(str(last_err))
+            
+        files = [f for f in os.listdir(DOWNLOADS_DIR) if job_id[:8] in f]
         if files:
             target_filename = files[0]
             target_path = os.path.join(DOWNLOADS_DIR, target_filename)
@@ -157,18 +171,13 @@ def run_video_download(job_id: str, url: str, format_selector: str, ext: str = '
     try:
         out_template = os.path.join(DOWNLOADS_DIR, f"%(title)s_{job_id[:8]}.%(ext)s")
         
-        ydl_opts = {
+        base_opts = {
             'format': format_selector or 'bestvideo+bestaudio/best',
             'merge_output_format': ext or 'mp4',
             'outtmpl': out_template,
             'quiet': True,
             'no_warnings': True,
             'nocheckcertificate': True,
-            'extractor_args': {
-                'youtube': {
-                    'player_client': ['ios', 'android', 'mweb', 'web_creator', 'web'],
-                }
-            },
             'http_headers': {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
                 'Accept-Language': 'vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7',
@@ -176,8 +185,29 @@ def run_video_download(job_id: str, url: str, format_selector: str, ext: str = '
             'progress_hooks': [lambda d: download_progress_hook(d, job_id)],
         }
         
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=True)
+        client_configs = [
+            ['android_vr', 'android', 'ios', 'mweb'],
+            ['ios', 'android', 'mweb', 'web_creator', 'web'],
+            ['web_creator', 'mweb', 'android'],
+            ['web']
+        ]
+        
+        download_success = False
+        last_err = None
+        for clients in client_configs:
+            try:
+                ydl_opts = base_opts.copy()
+                ydl_opts['extractor_args'] = {'youtube': {'player_client': clients}}
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    ydl.extract_info(url, download=True)
+                    download_success = True
+                    break
+            except Exception as e:
+                last_err = e
+                continue
+                
+        if not download_success:
+            raise Exception(str(last_err))
             
         files = [f for f in os.listdir(DOWNLOADS_DIR) if job_id[:8] in f]
         if files:
