@@ -5,6 +5,8 @@ import VideoOverviewCard from './components/VideoOverviewCard';
 import AudioColumn from './components/AudioColumn';
 import VideoColumn from './components/VideoColumn';
 import DownloadModal from './components/DownloadModal';
+import AdsterraNativeBanner from './components/AdsterraNativeBanner';
+import AdsterraSidebarBanner from './components/AdsterraSidebarBanner';
 import { fetchVideoInfo, startDownload } from './api/client';
 import { injectAdsterraScripts } from './config/ads';
 import { Download } from 'lucide-react';
@@ -67,22 +69,31 @@ export default function App() {
             error={error}
           />
 
+          {/* Ad Unit 1: Native Banner Container Ad */}
+          <AdsterraNativeBanner />
+
           {info && <VideoOverviewCard info={info} />}
 
-          {/* 2 COLUMNS LAYOUT: AUDIO & VIDEO */}
+          {/* 2 COLUMNS LAYOUT + SIDEBAR AD UNIT 2 */}
           {info && (
-            <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch animate-fadeIn">
-              {/* Column 1: Audio Downloads */}
-              <AudioColumn
-                qualities={info.audio_qualities}
-                onDownload={handleDownload}
-              />
+            <div className="mt-8 flex flex-col xl:flex-row gap-6 items-start justify-center animate-fadeIn">
+              {/* 2 Main Download Columns */}
+              <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+                <AudioColumn
+                  qualities={info.audio_qualities}
+                  onDownload={handleDownload}
+                />
+                <VideoColumn
+                  qualities={info.video_qualities}
+                  onDownload={handleDownload}
+                />
+              </div>
 
-              {/* Column 2: Video Downloads */}
-              <VideoColumn
-                qualities={info.video_qualities}
-                onDownload={handleDownload}
-              />
+              {/* Ad Unit 2: 160x300 Iframe Banner (Sticky Sidebar on Desktop) */}
+              <div className="w-full xl:w-auto shrink-0 flex flex-col items-center justify-start xl:sticky xl:top-6">
+                <div className="text-[10px] font-mono text-slate-400 mb-1 uppercase tracking-wider">Quảng cáo</div>
+                <AdsterraSidebarBanner />
+              </div>
             </div>
           )}
 
