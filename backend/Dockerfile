@@ -1,7 +1,11 @@
 FROM python:3.12-slim
 
-# Install ffmpeg and system dependencies
-RUN apt-get update && apt-get install -y ffmpeg curl git && rm -rf /var/lib/apt/lists/*
+# Install ffmpeg, curl, git, unzip and system dependencies
+RUN apt-get update && apt-get install -y ffmpeg curl git unzip && rm -rf /var/lib/apt/lists/*
+
+# Install Deno for yt-dlp JavaScript challenge solver
+RUN curl -fsSL https://deno.land/install.sh | sh -s -- -y
+ENV PATH="/root/.deno/bin:$PATH"
 
 WORKDIR /app
 
