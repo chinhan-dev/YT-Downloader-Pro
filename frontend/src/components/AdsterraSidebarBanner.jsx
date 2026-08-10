@@ -29,8 +29,11 @@ export default function AdsterraSidebarBanner() {
   }, []);
 
   return (
-    <div className="flex justify-center items-center my-4 overflow-hidden">
-      <div ref={bannerRef} className="w-[160px] h-[300px] flex justify-center items-center bg-slate-100/50 rounded-xl border border-slate-200/60 shadow-xs" />
+    <div className="glass-panel-light rounded-2xl p-4 border border-emerald-200/80 shadow-sm flex flex-col items-center justify-center bg-white/80 backdrop-blur-md">
+      <div className="text-[11px] font-semibold text-slate-600 mb-2 text-center leading-snug">
+        🙏 Quảng cáo kinh phí duy trì Web 24/7
+      </div>
+      <div ref={bannerRef} className="w-[160px] h-[300px] flex justify-center items-center rounded-xl overflow-hidden bg-slate-50" />
     </div>
   );
 }
