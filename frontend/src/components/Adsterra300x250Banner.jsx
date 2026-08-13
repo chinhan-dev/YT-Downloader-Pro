@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-export default function AdsterraSidebarBanner() {
+export default function Adsterra300x250Banner() {
   const bannerRef = useRef(null);
 
   useEffect(() => {
@@ -12,25 +12,25 @@ export default function AdsterraSidebarBanner() {
     confScript.type = 'text/javascript';
     confScript.text = `
       atOptions = {
-        'key' : '4571d32137db0c11b3e3cd5771ace73a',
+        'key' : '03f3968306c99e571229734046f0e00c',
         'format' : 'iframe',
-        'height' : 600,
-        'width' : 160,
+        'height' : 250,
+        'width' : 300,
         'params' : {}
       };
     `;
 
     const invokeScript = document.createElement('script');
     invokeScript.type = 'text/javascript';
-    invokeScript.src = 'https://www.highperformanceformat.com/4571d32137db0c11b3e3cd5771ace73a/invoke.js';
+    invokeScript.src = 'https://www.highperformanceformat.com/03f3968306c99e571229734046f0e00c/invoke.js';
 
     bannerRef.current.appendChild(confScript);
     bannerRef.current.appendChild(invokeScript);
   }, []);
 
   return (
-    <div className="flex justify-center items-center my-2 overflow-hidden">
-      <div ref={bannerRef} className="w-[160px] h-[600px] flex justify-center items-center overflow-hidden" />
+    <div className="flex justify-center items-center my-4 overflow-hidden">
+      <div ref={bannerRef} className="w-[300px] h-[250px] flex justify-center items-center overflow-hidden" />
     </div>
   );
 }

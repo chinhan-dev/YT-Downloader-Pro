@@ -7,6 +7,9 @@ import VideoColumn from './components/VideoColumn';
 import DownloadModal from './components/DownloadModal';
 import AdsterraNativeBanner from './components/AdsterraNativeBanner';
 import AdsterraSidebarBanner from './components/AdsterraSidebarBanner';
+import AdsterraLeaderboardBanner from './components/AdsterraLeaderboardBanner';
+import Adsterra468x60Banner from './components/Adsterra468x60Banner';
+import Adsterra300x250Banner from './components/Adsterra300x250Banner';
 import SeoContentSection from './components/SeoContentSection';
 import { fetchVideoInfo, startDownload } from './api/client';
 import { injectAdsterraScripts } from './config/ads';
@@ -69,13 +72,19 @@ export default function App() {
         <Header />
 
         <main className="flex-1 w-full max-w-6xl mx-auto px-4 pb-12">
+          {/* Ad Banner 1: Leaderboard 728x90 (Desktop) / 320x50 (Mobile) */}
+          <AdsterraLeaderboardBanner />
+
           <UrlInputBar
             onFetch={handleFetchInfo}
             loading={loading}
             error={error}
           />
 
-          {/* Ad Code 3: Native Banner Container (ALWAYS VISIBLE ON PAGE) */}
+          {/* Ad Banner 2: 468x60 Banner below input bar */}
+          <Adsterra468x60Banner />
+
+          {/* Ad Banner 3: Native Banner Container */}
           <AdsterraNativeBanner />
 
           {info && <VideoOverviewCard info={info} />}
@@ -95,7 +104,7 @@ export default function App() {
                 />
               </div>
 
-              {/* Ad Code 4: 160x300 Iframe Banner (Sticky Sidebar on Desktop) */}
+              {/* Ad Banner 4: 160x600 Skyscraper (Sticky Sidebar on Desktop) */}
               <div className="w-full xl:w-auto shrink-0 flex flex-col items-center justify-start xl:sticky xl:top-6">
                 <AdsterraSidebarBanner />
               </div>
@@ -119,10 +128,15 @@ export default function App() {
                 </div>
               )}
 
-              {/* Ad Code 4: 160x300 Banner ON HOMEPAGE */}
+              {/* Ad Banner 5: 300x250 Medium Rectangle ON HOMEPAGE */}
+              <Adsterra300x250Banner />
+              {/* Ad Banner 4: 160x600 Banner ON HOMEPAGE */}
               <AdsterraSidebarBanner />
             </div>
           )}
+
+          {/* Ad Banner 5: 300x250 Medium Rectangle above SEO section */}
+          <Adsterra300x250Banner />
 
           {/* Rich SEO Content, Guide & FAQ Section */}
           <SeoContentSection />
